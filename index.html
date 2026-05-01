@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UON GPA & WAM Calculator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>UON GPA &amp; WAM Calculator</h1>
+    <p class="subtitle">University of Newcastle · 7-point scale</p>
+  </header>
+
+  <section id="upload-section">
+    <div id="drop-zone" role="button" tabindex="0" aria-label="Drop transcript PDF here">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 16V4m0 0L8 8m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+      </svg>
+      <p>Drop your transcript PDF here</p>
+      <span>or click to browse</span>
+      <input type="file" id="file-input" accept=".pdf" aria-hidden="true">
+    </div>
+    <div id="upload-error" class="error hidden"></div>
+  </section>
+
+  <section id="results-section" class="hidden">
+    <div id="program-info">
+      <span id="program-name"></span>
+    </div>
+
+    <div class="score-grid">
+      <div class="score-card">
+        <div class="score-label">GPA</div>
+        <div class="score-value" id="gpa-value">—</div>
+        <div class="score-sub">out of 7.0</div>
+      </div>
+      <div class="score-card">
+        <div class="score-label">WAM</div>
+        <div class="score-value" id="wam-value">—</div>
+        <div class="score-sub">weighted average mark</div>
+      </div>
+      <div class="score-card">
+        <div class="score-label">Units</div>
+        <div class="score-value" id="units-value">—</div>
+        <div class="score-sub">credit points completed</div>
+      </div>
+    </div>
+
+    <div class="grade-bar-wrap">
+      <div id="grade-bar"></div>
+      <div id="grade-legend"></div>
+    </div>
+
+    <details class="course-details">
+      <summary>Course breakdown</summary>
+      <table id="course-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Code</th>
+            <th>Course</th>
+            <th>Units</th>
+            <th>Mark</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody id="course-tbody"></tbody>
+      </table>
+    </details>
+
+    <section id="sim-section">
+      <h2>Projections</h2>
+      <p class="sim-note">Add upcoming units to see how they affect your scores.</p>
+
+      <div class="sim-inputs">
+        <div class="sim-field">
+          <label for="sim-units">Upcoming units</label>
+          <input type="number" id="sim-units" min="0" max="480" value="80" step="10">
+        </div>
+        <div class="sim-field">
+          <label for="sim-grade">Target grade</label>
+          <select id="sim-grade">
+            <option value="7">All HDs (7.0)</option>
+            <option value="6">All Ds (6.0)</option>
+            <option value="5">All Cs (5.0)</option>
+            <option value="4">All Ps (4.0)</option>
+          </select>
+        </div>
+        <div class="sim-field">
+          <label for="sim-mark">Target mark %</label>
+          <input type="number" id="sim-mark" min="0" max="100" value="85">
+        </div>
+      </div>
+
+      <div class="score-grid sim-results">
+        <div class="score-card accent">
+          <div class="score-label">Projected GPA</div>
+          <div class="score-value" id="proj-gpa">—</div>
+        </div>
+        <div class="score-card accent">
+          <div class="score-label">Projected WAM</div>
+          <div class="score-value" id="proj-wam">—</div>
+        </div>
+      </div>
+
+      <div id="target-section">
+        <h3>How many units at each grade to reach a target GPA?</h3>
+        <div class="target-inputs">
+          <div class="sim-field">
+            <label for="target-gpa">Target GPA</label>
+            <input type="number" id="target-gpa" min="0" max="7" step="0.1" value="6.5">
+          </div>
+        </div>
+        <div id="target-results"></div>
+      </div>
+    </section>
+
+    <button id="reset-btn" class="reset-btn">Upload another transcript</button>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha512-q+4lVt6FzCGMTBFBpBq1/d7CL1YXsxmWb4rjMRv7YOOQ0eOPiKRzpHmzv4LJY+0KGjFRRXVD5CjkVvSoH1tQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+<script src="app.js"></script>
+</body>
+</html>
