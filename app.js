@@ -172,6 +172,7 @@ function render(courses) {
   document.getElementById('units-value').textContent = stats.units;
 
   renderGradeBar(stats.gradeCounts, stats.units);
+  renderChart(courses);
   renderTable(courses);
   updateSimulation();
 
@@ -199,7 +200,7 @@ function renderGradeBar(counts, total) {
 
     const li = document.createElement('div');
     li.className = 'legend-item';
-    li.innerHTML = `<span class="legend-dot" style="background:${col}"></span>${g} ${units}u`;
+    li.innerHTML = `<span class="legend-dot" style="background:${col}"></span>${g} ${units} units`;
     legend.appendChild(li);
   }
 }
@@ -223,6 +224,96 @@ function renderTable(courses) {
       <td class="${cls}">${c.grade}</td>`;
     tbody.appendChild(tr);
   }
+}
+
+// ─── Charts ───────────────────────────────────────────────────────────────────
+function termSortKey(t) {
+  const m = t.match(/T(\d)\s+(\d{4})/);
+  return m ? +m[2] * 10 + +m[1] : 0;
+}
+
+function renderChart(courses) {
+  const sec = document.getElementById('chart-section');
+  const sortedTerms = [...new Set(courses.map(c => c.term))].sort((a, b) => termSortKey(a) - termSortKey(b));
+  if (sortedTerms.length < 2) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+
+  let cumGpaNum = 0, cumGpaDen = 0, cumWamNum = 0, cumWamDen = 0;
+  const points = sortedTerms.map(term => {
+    courses.filter(c => c.term === term).forEach(c => {
+      const pts = GRADE_POINTS[c.grade];
+      if (pts !== undefined) {
+        cumGpaNum += pts * c.units; cumGpaDen += c.units;
+        cumWamNum += c.mark * c.units; cumWamDen += c.units;
+      }
+    });
+    return {
+      term,
+      gpa: cumGpaDen ? cumGpaNum / cumGpaDen : 0,
+      wam: cumWamDen ? cumWamNum / cumWamDen : 0,
+    };
+  });
+
+  const gpaFloor = Math.max(0, Math.floor(Math.min(...points.map(p => p.gpa)) * 2 - 0.5) / 2);
+  document.getElementById('chart-gpa').innerHTML =
+    buildLineChart(points, 'gpa', gpaFloor, 7, '#4f7cff', 'grad-gpa', v => v.toFixed(1));
+
+  const wamFloor = Math.max(0, Math.floor(Math.min(...points.map(p => p.wam)) / 10) * 10 - 10);
+  document.getElementById('chart-wam').innerHTML =
+    buildLineChart(points, 'wam', wamFloor, 100, '#22c55e', 'grad-wam', v => Math.round(v));
+}
+
+function buildLineChart(points, key, yMin, yMax, color, gradId, fmt) {
+  const W = 340, H = 180;
+  const ml = 36, mr = 10, mt = 22, mb = 44;
+  const pw = W - ml - mr;
+  const ph = H - mt - mb;
+  const n = points.length;
+
+  const xi = i => n === 1 ? ml + pw / 2 : ml + (i / (n - 1)) * pw;
+  const yi = v => mt + ph - ((Math.min(Math.max(v, yMin), yMax) - yMin) / (yMax - yMin)) * ph;
+
+  const parts = [];
+
+  // Gradient
+  parts.push(`<defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="${color}" stop-opacity="0.2"/>
+    <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+  </linearGradient></defs>`);
+
+  // Grid + Y labels (4 divisions)
+  for (let t = 0; t <= 4; t++) {
+    const v = yMin + (t / 4) * (yMax - yMin);
+    const y = yi(v).toFixed(1);
+    parts.push(`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="#2a2d3a" stroke-width="1"/>`);
+    parts.push(`<text x="${ml-4}" y="${(+y+4).toFixed(1)}" text-anchor="end" fill="#7a7f99" font-size="9" font-family="sans-serif">${fmt(v)}</text>`);
+  }
+
+  // Area fill
+  if (n > 1) {
+    const areaD = points.map((p, i) => `${i===0?'M':'L'}${xi(i).toFixed(1)},${yi(p[key]).toFixed(1)}`).join(' ')
+      + ` L${xi(n-1).toFixed(1)},${(mt+ph).toFixed(1)} L${xi(0).toFixed(1)},${(mt+ph).toFixed(1)} Z`;
+    parts.push(`<path d="${areaD}" fill="url(#${gradId})"/>`);
+  }
+
+  // Line
+  if (n > 1) {
+    const lineD = points.map((p, i) => `${i===0?'M':'L'}${xi(i).toFixed(1)},${yi(p[key]).toFixed(1)}`).join(' ');
+    parts.push(`<path d="${lineD}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`);
+  }
+
+  // Dots, value labels, x labels
+  points.forEach((p, i) => {
+    const x = +xi(i).toFixed(1);
+    const y = +yi(p[key]).toFixed(1);
+    const valY = Math.max(mt + 10, y - 8);
+    parts.push(`<circle cx="${x}" cy="${y}" r="4" fill="${color}" stroke="#0f1117" stroke-width="2"/>`);
+    parts.push(`<text x="${x}" y="${valY}" text-anchor="middle" fill="${color}" font-size="9" font-weight="700" font-family="sans-serif">${fmt(p[key])}</text>`);
+    // X label, rotated to avoid overlap
+    parts.push(`<text x="${x}" y="${mt+ph+12}" text-anchor="end" fill="#7a7f99" font-size="9" font-family="sans-serif" transform="rotate(-40,${x},${mt+ph+12})">${p.term}</text>`);
+  });
+
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">${parts.join('')}</svg>`;
 }
 
 // ─── Simulation ───────────────────────────────────────────────────────────────
@@ -274,9 +365,11 @@ function updateTarget(base) {
     if (denom <= 0) continue;
     const unitsNeeded = Math.ceil(base.units * (targetGPA - base.gpa) / denom);
     if (unitsNeeded < 0) continue;
-    html += `<div>Need <strong>${unitsNeeded} units</strong> of ${opt.label} to reach GPA ${targetGPA.toFixed(1)}</div>`;
+    const coursesNeeded = Math.ceil(unitsNeeded / 10);
+    html += `<div>Need <strong>${unitsNeeded} units</strong> or <strong>${coursesNeeded} courses</strong>* of ${opt.label} to reach GPA ${targetGPA.toFixed(1)}</div>`;
   }
 
+  if (html) html += `<p class="footnote">* assuming 10 unit courses</p>`;
   el.innerHTML = html || '<em>Not achievable with a single grade type — mix of grades required.</em>';
 }
 

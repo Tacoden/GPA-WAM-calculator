@@ -53,6 +53,19 @@
       <div id="grade-legend"></div>
     </div>
 
+    <div id="chart-section">
+      <div class="chart-row">
+        <div class="chart-wrap">
+          <div class="chart-title">Cumulative GPA</div>
+          <div id="chart-gpa"></div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Cumulative WAM</div>
+          <div id="chart-wam"></div>
+        </div>
+      </div>
+    </div>
+
     <details class="course-details">
       <summary>Course breakdown</summary>
       <table id="course-table">
@@ -96,11 +109,15 @@
 
       <div class="score-grid sim-results">
         <div class="score-card accent">
-          <div class="score-label">Projected GPA</div>
+          <div class="score-label">Projected GPA
+            <span class="info-tip" tabindex="0">?<span class="tip-bubble">Your current GPA (weighted by completed units) blended with the target grade for upcoming units.<br><br>Formula: (current GPA × current units + grade points × upcoming units) ÷ total units.<br><br>Grade points: HD=7, D=6, C=5, P=4</span></span>
+          </div>
           <div class="score-value" id="proj-gpa">—</div>
         </div>
         <div class="score-card accent">
-          <div class="score-label">Projected WAM</div>
+          <div class="score-label">Projected WAM
+            <span class="info-tip" tabindex="0">?<span class="tip-bubble">Your current WAM (weighted by completed units) blended with the target mark % for upcoming units.<br><br>Formula: (current WAM × current units + target mark % × upcoming units) ÷ total units.<br><br>The mark % is set independently — use it to reflect your expected numerical score regardless of grade band.</span></span>
+          </div>
           <div class="score-value" id="proj-wam">—</div>
         </div>
       </div>
