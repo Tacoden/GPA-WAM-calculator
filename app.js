@@ -76,6 +76,7 @@ async function parsePDF(buffer) {
     });
   }
 
+  console.log('[UON Parser] raw lines:', lines);
   return extractCourses(lines);
 }
 
@@ -86,11 +87,10 @@ function extractCourses(lines) {
   let currentProgram = '';
   let skipProgram = false;
 
-  // Patterns
-  const termRe    = /Trimester\s+(\d)\s*[-–]\s*(\d{4})/i;
+  // Patterns — handle hyphens, en/em dashes, commas, and missing separator
+  const termRe    = /(?:trimester|semester)\s+(\d)\s*[-–—,]?\s*(\d{4})/i;
   const programRe = /^Program\s*[:\-]?\s*(.+)/i;
   // Course row: CODE NNNN ... UNITS MARK GRADE [EARNED]
-  // e.g. "MECH 3400 Materials Science 10 83 P 10"
   const courseRe  = /^([A-Z]{2,5})\s+(\d{3,5}[A-Z]?)\s+(.+?)\s+(\d{1,3})\s+(\d{1,3})\s+(HD|D|C|P|UP|F|WF|WD|SY|US|AW|W)\b/;
 
   for (let i = 0; i < lines.length; i++) {
@@ -234,9 +234,15 @@ function termSortKey(t) {
 
 function renderChart(courses) {
   const sec = document.getElementById('chart-section');
-  const sortedTerms = [...new Set(courses.map(c => c.term))].sort((a, b) => termSortKey(a) - termSortKey(b));
-  if (sortedTerms.length < 2) { sec.style.display = 'none'; return; }
+  const sortedTerms = [...new Set(courses.map(c => c.term).filter(Boolean))].sort((a, b) => termSortKey(a) - termSortKey(b));
+  console.log('[UON Chart] unique terms found:', sortedTerms);
+  if (sortedTerms.length < 2) {
+    sec.style.display = '';
+    sec.innerHTML = `<p class="chart-unavail">Progress chart unavailable — trimester headings could not be detected in this PDF (found: ${JSON.stringify(sortedTerms)}). Check the browser console for raw lines.</p>`;
+    return;
+  }
   sec.style.display = '';
+  sec.innerHTML = '<div class="chart-row"><div class="chart-wrap"><div class="chart-title">Cumulative GPA</div><div id="chart-gpa"></div></div><div class="chart-wrap"><div class="chart-title">Cumulative WAM</div><div id="chart-wam"></div></div></div>';
 
   let cumGpaNum = 0, cumGpaDen = 0, cumWamNum = 0, cumWamDen = 0;
   const points = sortedTerms.map(term => {

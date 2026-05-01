@@ -249,6 +249,7 @@ tr:hover td { background: var(--surface); }
   border-radius: var(--radius);
   padding: 1rem 1rem .5rem;
 }
+.chart-unavail { font-size: .82rem; color: var(--muted); padding: .75rem 0; }
 .chart-title {
   font-size: .75rem;
   text-transform: uppercase;
