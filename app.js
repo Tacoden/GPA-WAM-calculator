@@ -1,5 +1,7 @@
 'use strict';
 
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
 // ─── Grade mappings ───────────────────────────────────────────────────────────
 const GRADE_POINTS = { HD: 7, D: 6, C: 5, P: 4, UP: 4, F: 0, WF: 0 };
 const GRADE_EXCLUDE = new Set(['WD', 'SY', 'US', 'AW', 'NR', 'NA', 'W', 'WN']);
