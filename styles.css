@@ -312,7 +312,7 @@ body {
   margin: 8px 0 4px;
 }
 .big-stat-num {
-  font-size: clamp(96px, 14vw, 220px);
+  font-size: clamp(48px, 9vw, 160px);
   font-weight: 900;
   letter-spacing: -0.06em;
   line-height: 0.85;
@@ -682,4 +682,35 @@ body {
   .calc-need-num { font-size: clamp(40px, 10vw, 64px); }
   .calc-dist-num { font-size: clamp(32px, 9vw, 56px); }
   .calc-dist-plus { font-size: clamp(22px, 6vw, 36px); }
+
+  /* Table — stack rows as cards */
+  .utbl, .utbl tbody { display: block; }
+  .utbl thead { display: none; }
+  .utbl tbody tr {
+    display: block;
+    padding: 12px 0;
+    border-bottom: 1px dotted var(--ink-faint);
+  }
+  .utbl tbody tr:last-child { border-bottom: none; }
+  .utbl td {
+    display: inline-block;
+    padding: 2px 10px 2px 0;
+  }
+  .utbl .td-title {
+    display: block;
+    width: 100%;
+    padding: 0 0 6px 0;
+    font-size: 14px;
+    white-space: normal;
+  }
+  .utbl td[data-label="CR"] { display: none; }
+  .utbl td::before {
+    content: attr(data-label) " ";
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+  .utbl .td-title::before { display: none; }
 }

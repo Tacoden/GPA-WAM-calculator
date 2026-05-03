@@ -828,12 +828,12 @@ function UnitTable({ units, sys }) {
             const b = markToBand(u.mark, sys);
             return (
               <tr key={i}>
-                <td className="td-mono">{u.sem}</td>
-                <td className="td-mono">{u.code}</td>
-                <td className="td-title">{u.title}</td>
-                <td className="td-mono">{u.credits}</td>
-                <td className="td-mono td-mark">{u.mark}</td>
-                <td className="td-mono"><span className={'tag tag-' + b.code.replace(/[^A-Za-z]/g,'')}>{b.code}</span></td>
+                <td className="td-mono" data-label="SEM">{u.sem}</td>
+                <td className="td-mono" data-label="CODE">{u.code}</td>
+                <td className="td-title" data-label="UNIT">{u.title}</td>
+                <td className="td-mono" data-label="CR">{u.credits}</td>
+                <td className="td-mono td-mark" data-label="MARK">{u.mark}</td>
+                <td className="td-mono" data-label="GRADE"><span className={'tag tag-' + b.code.replace(/[^A-Za-z]/g,'')}>{b.code}</span></td>
               </tr>
             );
           })}
