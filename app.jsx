@@ -168,7 +168,6 @@ function parseTranscript(text) {
 // ── Tweak defaults ───────────────────────────────────────────────────────
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "system": "AU",
-  "meme": "auto",
   "tone": "online",
   "fakeWam": 0
 }/*EDITMODE-END*/;
@@ -234,7 +233,7 @@ function App() {
         <Results
           units={units} degree={degree}
           wam={displayWam} gpa={gpa} totalCredits={totalCredits}
-          sys={t.system} sysObj={sys} meme={t.meme} tone={t.tone} onReset={reset}
+          sys={t.system} sysObj={sys} tone={t.tone} onReset={reset}
         />
       )}
       <Footer />
@@ -243,17 +242,6 @@ function App() {
         <TweakRadio label="System" value={t.system}
           options={[{value:'AU',label:'AU'},{value:'US',label:'US'},{value:'UK',label:'UK'}]}
           onChange={(v) => setTweak('system', v)} />
-        <TweakSection label="Meme variant" />
-        <TweakSelect label="Meme" value={t.meme}
-          options={[
-            {value:'auto',label:'Auto (by GPA)'},
-            {value:'fine',label:'This is fine'},
-            {value:'hamster',label:'Panik / Kalm / Panik'},
-            {value:'galaxy',label:'Expanding brain'},
-            {value:'cat',label:'Sad keyboard cat'},
-            {value:'rat',label:'Rat race'},
-          ]}
-          onChange={(v) => setTweak('meme', v)} />
         <TweakSection label="Copy tone" />
         <TweakRadio label="Tone" value={t.tone}
           options={[
@@ -339,9 +327,8 @@ function DropZone({ onFile, parsing, dragOver, setDragOver, tone, err }) {
 }
 
 // ── Results ──────────────────────────────────────────────────────────────
-function Results({ units, degree, wam, gpa, totalCredits, sys, sysObj, meme, tone, onReset }) {
+function Results({ units, degree, wam, gpa, totalCredits, sys, sysObj, tone, onReset }) {
   const band = markToBand(wam, sys);
-  const memeKey = meme === 'auto' ? memeFromGpa(gpa, sysObj.max) : meme;
   return (
     <>
       <DegreeBanner degree={degree} units={units.length} />
@@ -353,7 +340,6 @@ function Results({ units, degree, wam, gpa, totalCredits, sys, sysObj, meme, ton
         <Verdict gpa={gpa} max={sysObj.max} tone={tone} />
       </section>
       <DegreeRoast degree={degree} wam={wam} gpa={gpa} max={sysObj.max} units={units} tone={tone} />
-      <MemePanel kind={memeKey} gpa={gpa} max={sysObj.max} tone={tone} />
       <Trend units={units} sys={sys} />
       <Calculators units={units} wam={wam} gpa={gpa} sys={sys} sysObj={sysObj} tone={tone} />
       <UnitTable units={units} sys={sys} />
@@ -544,187 +530,6 @@ function DegreeRoast({ degree, wam, gpa, max, units, tone }) {
       </div>
     </section>
   );
-}
-
-// ── Meme panel (original abstract illustrations) ─────────────────────────
-function memeFromGpa(gpa, max) {
-  const r = gpa / max;
-  if (r >= 0.92) return 'galaxy';
-  if (r >= 0.78) return 'rat';
-  if (r >= 0.6)  return 'fine';
-  if (r >= 0.45) return 'hamster';
-  return 'cat';
-}
-const MEMES = {
-  fine:    { caption: 'this is fine.',                sub: 'a dog. a room. a fire. an average grade.' },
-  hamster: { caption: 'PANIK · KALM · PANIK',         sub: 'three states. one rodent. zero exam preparation.' },
-  galaxy:  { caption: 'expanded mind.',               sub: 'four brains. ascending. you are the brightest among us. unbearable.' },
-  cat:     { caption: 'sad keyboard cat.',            sub: 'plays a song for the marks you do not have.' },
-  rat:     { caption: 'rat race.',                    sub: 'four rats. one finish line. nominally first place.' },
-};
-
-function MemePanel({ kind, gpa, max, tone }) {
-  const m = MEMES[kind] || MEMES.fine;
-  return (
-    <section className="meme">
-      <h3 className="sec-h">Current emotional state.</h3>
-      <div className="meme-grid">
-        <div className="meme-art">
-          <MemeArt kind={kind} />
-        </div>
-        <div className="meme-cap">
-          <div className="meme-cap-big">{m.caption}</div>
-          <div className="meme-cap-sub">{m.sub}</div>
-          <div className="meme-meta">
-            <div><span>RATIO</span><b>{fmt2(gpa)}/{max.toFixed(1)}</b></div>
-            <div><span>VIBE</span><b>{kind.toUpperCase()}</b></div>
-            <div><span>SOURCE</span><b>VOID</b></div>
-          </div>
-        </div>
-      </div>
-      <MemeCredits />
-    </section>
-  );
-}
-
-// References list — abstract illustrations stand in for these copyrighted
-// originals. We need rights/permission before swapping in the real images.
-const MEME_REFS = [
-  { id: 'fine',    title: '"This Is Fine"',          author: 'KC Green',         year: '2013', src: 'Gunshow #648, "On Fire"' },
-  { id: 'hamster', title: 'Panik / Kalm / Panik',    author: 'unknown',          year: '2020', src: 'viral hamster meme template' },
-  { id: 'galaxy',  title: 'Expanding Brain',         author: 'unknown',          year: '2017', src: '4-panel galaxy-brain meme' },
-  { id: 'cat',     title: 'Keyboard Cat',            author: 'Charlie Schmidt',  year: '2007', src: 'video: "Play Him Off, Keyboard Cat"' },
-  { id: 'rat',     title: 'Rat Race',                author: 'unknown',          year: '—',    src: 'idiom / cubicle rat illustrations' },
-];
-function MemeCredits() {
-  return (
-    <div className="meme-creds">
-      <div className="meme-creds-h">References</div>
-      <p className="meme-creds-sub">Illustrations above are original abstract stand-ins. Originals below are copyrighted — confirm rights / get permission before swapping any in.</p>
-      <ol className="meme-creds-list">
-        {MEME_REFS.map(r => (
-          <li key={r.id}>
-            <span className="mc-id">{r.id}</span>
-            <span className="mc-title">{r.title}</span>
-            <span className="mc-meta">{r.author} · {r.year}</span>
-            <span className="mc-src">{r.src}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}
-
-function MemeArt({ kind }) {
-  if (kind === 'fine') {
-    return (
-      <svg viewBox="0 0 400 300" className="meme-svg">
-        <g fill="var(--ink)">
-          {[0,40,80,120,160,200,240,280,320,360].map((x,i)=>(
-            <path key={i} d={`M${x} 220 q10 -${30+(i%3)*15} 20 0 q-10 -${20+(i%2)*10} 20 ${i%2===0?-15:0} q10 ${i%2===0?15:30} -10 ${i%2===0?20:5} z`} opacity={0.85}/>
-          ))}
-        </g>
-        <rect x="120" y="200" width="160" height="6" fill="var(--ink)"/>
-        <rect x="130" y="206" width="4" height="40" fill="var(--ink)"/>
-        <rect x="266" y="206" width="4" height="40" fill="var(--ink)"/>
-        <rect x="180" y="180" width="30" height="22" fill="none" stroke="var(--ink)" strokeWidth="3"/>
-        <path d="M210 185 q10 0 10 8 q0 8 -10 8" fill="none" stroke="var(--ink)" strokeWidth="3"/>
-        <path d="M188 178 q1 -6 6 -8 M198 178 q1 -6 6 -8" stroke="var(--ink)" strokeWidth="2" fill="none"/>
-        <circle cx="160" cy="160" r="20" fill="none" stroke="var(--ink)" strokeWidth="3"/>
-        <circle cx="153" cy="158" r="2" fill="var(--ink)"/>
-        <circle cx="167" cy="158" r="2" fill="var(--ink)"/>
-        <path d="M150 168 q10 6 20 0" fill="none" stroke="var(--ink)" strokeWidth="2.5"/>
-        <line x1="160" y1="180" x2="160" y2="200" stroke="var(--ink)" strokeWidth="3"/>
-        <line x1="160" y1="190" x2="180" y2="195" stroke="var(--ink)" strokeWidth="3"/>
-      </svg>
-    );
-  }
-  if (kind === 'hamster') {
-    return (
-      <svg viewBox="0 0 400 300" className="meme-svg">
-        {[{cx:90, r:50, l:'PANIK'},{cx:200, r:50, l:'KALM'},{cx:310, r:50, l:'PANIK'}].map((c,i)=>(
-          <g key={i}>
-            <circle cx={c.cx} cy="130" r={c.r} fill="none" stroke="var(--ink)" strokeWidth="2.5"/>
-            <circle cx={c.cx-15} cy="120" r={i===1?2:5} fill="var(--ink)"/>
-            <circle cx={c.cx+15} cy="120" r={i===1?2:5} fill="var(--ink)"/>
-            {i===1
-              ? <line x1={c.cx-12} y1="145" x2={c.cx+12} y2="145" stroke="var(--ink)" strokeWidth="2.5"/>
-              : <ellipse cx={c.cx} cy="148" rx="10" ry={i===0?6:8} fill="none" stroke="var(--ink)" strokeWidth="2.5"/>}
-            <text x={c.cx} y="220" textAnchor="middle" fontFamily="var(--mono)" fontSize="20" fontWeight="700" fill={i===1?'var(--ink)':'var(--accent-ink)'}>{c.l}</text>
-          </g>
-        ))}
-      </svg>
-    );
-  }
-  if (kind === 'galaxy') {
-    return (
-      <svg viewBox="0 0 400 300" className="meme-svg">
-        {[0,1,2,3].map(i => {
-          const cx = 60 + i*95, cy = 220 - i*30;
-          const glow = 8 + i*8;
-          return (
-            <g key={i}>
-              {[1,2,3].slice(0, i+1).map(g => (
-                <circle key={g} cx={cx} cy={cy} r={28 + g*glow} fill="none" stroke={i===3?'var(--accent)':'var(--ink)'} strokeWidth={i===3?2:1} opacity={0.5 - g*0.1}/>
-              ))}
-              <circle cx={cx} cy={cy} r="22" fill="var(--bg)" stroke="var(--ink)" strokeWidth="2.5"/>
-              <circle cx={cx-7} cy={cy-3} r="2.5" fill="var(--ink)"/>
-              <circle cx={cx+7} cy={cy-3} r="2.5" fill="var(--ink)"/>
-              <path d={`M${cx-8} ${cy+6} q8 ${i>1?6:-3} 16 0`} fill="none" stroke="var(--ink)" strokeWidth="2"/>
-            </g>
-          );
-        })}
-      </svg>
-    );
-  }
-  if (kind === 'cat') {
-    return (
-      <svg viewBox="0 0 400 300" className="meme-svg">
-        <line x1="120" y1="135" x2="115" y2="180" stroke="var(--accent-ink)" strokeWidth="3"/>
-        <circle cx="113" cy="186" r="4" fill="var(--accent-ink)"/>
-        <rect x="60" y="190" width="280" height="50" fill="none" stroke="var(--ink)" strokeWidth="2.5"/>
-        {Array.from({length:12}).map((_,i)=>(
-          <line key={i} x1={60+i*23} y1="190" x2={60+i*23} y2="240" stroke="var(--ink)" strokeWidth="1"/>
-        ))}
-        {[1,3,5,8,10].map(i=>(
-          <rect key={i} x={60+i*23-7} y="190" width="14" height="28" fill="var(--ink)"/>
-        ))}
-        <path d="M100 110 L130 80 L150 105 L210 105 L230 80 L260 110 Q270 160 180 165 Q90 160 100 110 Z" fill="var(--bg)" stroke="var(--ink)" strokeWidth="2.5"/>
-        <circle cx="155" cy="130" r="3" fill="var(--ink)"/>
-        <circle cx="205" cy="130" r="3" fill="var(--ink)"/>
-        <path d="M170 145 L180 152 L190 145" fill="none" stroke="var(--ink)" strokeWidth="2"/>
-        <path d="M175 158 q5 6 10 0" fill="none" stroke="var(--ink)" strokeWidth="2"/>
-        <ellipse cx="140" cy="195" rx="14" ry="6" fill="var(--ink)"/>
-        <ellipse cx="220" cy="195" rx="14" ry="6" fill="var(--ink)"/>
-      </svg>
-    );
-  }
-  if (kind === 'rat') {
-    return (
-      <svg viewBox="0 0 400 300" className="meme-svg">
-        <line x1="20" y1="130" x2="380" y2="130" stroke="var(--ink)" strokeWidth="1" strokeDasharray="4 6"/>
-        <line x1="20" y1="180" x2="380" y2="180" stroke="var(--ink)" strokeWidth="1" strokeDasharray="4 6"/>
-        <line x1="20" y1="230" x2="380" y2="230" stroke="var(--ink)" strokeWidth="1" strokeDasharray="4 6"/>
-        <line x1="340" y1="100" x2="340" y2="260" stroke="var(--ink)" strokeWidth="2"/>
-        <text x="345" y="98" fontFamily="var(--mono)" fontSize="11" fill="var(--ink)">FINISH</text>
-        {[
-          {x:300, y:130, label:'#1'},
-          {x:240, y:180, label:'#2'},
-          {x:200, y:230, label:'#3'},
-          {x:80,  y:80,  label:'YOU'},
-        ].map((r,i)=>(
-          <g key={i}>
-            <ellipse cx={r.x} cy={r.y} rx="20" ry="11" fill={r.label==='YOU'?'var(--accent)':'var(--bg)'} stroke="var(--ink)" strokeWidth="2"/>
-            <ellipse cx={r.x+18} cy={r.y-3} rx="6" ry="6" fill={r.label==='YOU'?'var(--accent)':'var(--bg)'} stroke="var(--ink)" strokeWidth="2"/>
-            <circle cx={r.x+22} cy={r.y-4} r="1.5" fill="var(--ink)"/>
-            <line x1={r.x-20} y1={r.y} x2={r.x-32} y2={r.y+2} stroke="var(--ink)" strokeWidth="2"/>
-            <text x={r.x} y={r.y+25} textAnchor="middle" fontFamily="var(--mono)" fontSize="10" fontWeight="700" fill="var(--ink)">{r.label}</text>
-          </g>
-        ))}
-      </svg>
-    );
-  }
-  return null;
 }
 
 // ── Trend charts ─────────────────────────────────────────────────────────
