@@ -600,7 +600,7 @@ function ChartCard({ title, data, valueKey, yMin, yMax, threshold, fmt }) {
         ))}
         {/* threshold */}
         <line x1={P} x2={W-P} y1={yScale(threshold.value)} y2={yScale(threshold.value)} stroke={threshold.color} strokeWidth="1.5" strokeDasharray="4 4"/>
-        <text x={W-P+6} y={yScale(threshold.value)+4} fontFamily="var(--mono)" fontSize="10" fill={threshold.color} fontWeight="700">{threshold.label}</text>
+        <text x={W-P} y={yScale(threshold.value)-6} textAnchor="end" fontFamily="var(--mono)" fontSize="10" fill={threshold.color} fontWeight="700">{threshold.label}</text>
         {/* line */}
         <path d={linePath} fill="none" stroke="var(--ink)" strokeWidth="2.5"/>
         {/* points */}

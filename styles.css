@@ -411,7 +411,6 @@ body {
   flex-direction: column;
   gap: 18px;
   min-width: 0;
-  overflow: hidden;
 }
 .calc-card:last-child { border-right: none; }
 .calc-card-acc { background: var(--accent); }
@@ -645,10 +644,14 @@ body {
   .num-grid, .meme-grid, .calc-grid { grid-template-columns: 1fr; }
   .big-stat, .calc-card { border-right: none; border-bottom: 1px solid var(--ink); }
   .big-stat:last-child, .calc-card:last-child { border-bottom: none; }
-.ft-row { grid-template-columns: 1fr; }
+  .ft-row { grid-template-columns: 1fr; }
   .ft-cols { grid-template-columns: 1fr; }
   .page { padding: 20px 20px 0; }
   .trend-pair { grid-template-columns: 1fr; }
   .chart-card { border-right: none; border-bottom: 1px solid var(--ink); }
   .chart-card:last-child { border-bottom: none; }
+  .calc-card { padding: 22px 20px 24px; }
+  .calc-inputs { flex-direction: column; gap: 10px; }
+  .calc-need-num { font-size: clamp(48px, 12vw, 80px); }
+  .calc-dist-num { font-size: clamp(36px, 10vw, 64px); }
 }
