@@ -95,34 +95,6 @@ No frameworks, no npm, no build step. The entire app is three files: `index.html
 
 ---
 
-## Deployment
-
-### Cloudflare Pages (recommended)
-
-1. Fork or push this repo to GitHub
-2. Go to [Cloudflare Pages](https://pages.cloudflare.com/) → Create a project → Connect to Git
-3. Select the repository
-4. Leave build command and output directory blank (static site, no build needed)
-5. Deploy
-
-### GitHub Pages
-
-1. Go to repository **Settings → Pages**
-2. Set source to `main` branch, root directory
-3. Save — the site will be live at `https://<username>.github.io/<repo>`
-
-### Local
-
-Open `index.html` directly in a browser, or serve with any static file server:
-
-```sh
-npx serve .
-# or
-python3 -m http.server
-```
-
----
-
 ## Supported Transcript Format
 
 This tool is built for **University of Newcastle (Australia)** official transcripts exported from the student portal as PDF. It expects:
