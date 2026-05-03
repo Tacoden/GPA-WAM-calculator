@@ -345,6 +345,25 @@ body {
   text-wrap: pretty;
 }
 
+/* ── Chart legend ───────────────────────────────────────────────────── */
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.chart-legend-dash {
+  display: inline-block;
+  width: 20px;
+  flex-shrink: 0;
+  border-top: 1.5px dashed;
+}
+
 /* ── Trend chart pair ───────────────────────────────────────────────── */
 .trend { padding-bottom: 40px; }
 .trend-pair {
@@ -650,8 +669,17 @@ body {
   .trend-pair { grid-template-columns: 1fr; }
   .chart-card { border-right: none; border-bottom: 1px solid var(--ink); }
   .chart-card:last-child { border-bottom: none; }
-  .calc-card { padding: 22px 20px 24px; }
+
+  /* Drop zone — parsing state */
+  .drop { padding: 48px 24px; }
+  .drop-h { font-size: clamp(36px, 8vw, 72px); }
+  .drop-status { font-size: clamp(36px, 10vw, 72px); }
+
+  /* Calculators */
+  .calc-card { padding: 22px 18px 24px; }
   .calc-inputs { flex-direction: column; gap: 10px; }
-  .calc-need-num { font-size: clamp(48px, 12vw, 80px); }
-  .calc-dist-num { font-size: clamp(36px, 10vw, 64px); }
+  .numinp { width: 100%; }
+  .calc-need-num { font-size: clamp(40px, 10vw, 64px); }
+  .calc-dist-num { font-size: clamp(32px, 9vw, 56px); }
+  .calc-dist-plus { font-size: clamp(22px, 6vw, 36px); }
 }

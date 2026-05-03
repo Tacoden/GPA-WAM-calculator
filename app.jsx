@@ -383,10 +383,13 @@ function Verdict({ gpa, max, tone }) {
   const ratio = gpa / max;
   const lines = {
     online: [
-      { lo: 0.92, t: 'this is genuinely concerning behaviour. touch grass. log off. we are calling your mother.' },
-      { lo: 0.62, t: 'normal person grades. you eat lunch. you go outside. nothing is wrong with you and that is suspicious.' },
-      { lo: 0.45, t: 'pass is pass. nobody asks. the diploma is identical. log off and lie down.' },
-      { lo: 0,    t: 'okay so we are not panicking, we are simply recalibrating expectations downward forever.' },
+      { lo: 0.93, t: 'stop. get help. you are averaging high distinctions and spending your spare time checking your GPA on a website. this is not a flex, this is a cry for help.' },
+      { lo: 0.86, t: 'doing extremely well. suspiciously well. nobody who claims to be fine gets results like this. what are you not telling us.' },
+      { lo: 0.71, t: 'above average. you eat lunch. you go outside. nothing is noticeably wrong with you, which is itself slightly suspicious.' },
+      { lo: 0.57, t: 'passing. solidly. unremarkably. the diploma does not specify and neither will you.' },
+      { lo: 0.43, t: 'just on the right side of the line. it counts. it still counts. please get some sleep.' },
+      { lo: 0.28, t: 'below average. we are a little worried. not panicking yet. but we are watching.' },
+      { lo: 0,    t: 'okay so we are not panicking, we are simply recalibrating expectations downward forever. an email to your academic advisor would not go amiss.' },
     ],
     dry: [
       { lo: 0.85, t: 'Result is in the upper decile of the distribution. Continue current trajectory.' },
@@ -600,7 +603,6 @@ function ChartCard({ title, data, valueKey, yMin, yMax, threshold, fmt }) {
         ))}
         {/* threshold */}
         <line x1={P} x2={W-P} y1={yScale(threshold.value)} y2={yScale(threshold.value)} stroke={threshold.color} strokeWidth="1.5" strokeDasharray="4 4"/>
-        <text x={W-P} y={yScale(threshold.value)-6} textAnchor="end" fontFamily="var(--mono)" fontSize="10" fill={threshold.color} fontWeight="700">{threshold.label}</text>
         {/* line */}
         <path d={linePath} fill="none" stroke="var(--ink)" strokeWidth="2.5"/>
         {/* points */}
@@ -612,6 +614,10 @@ function ChartCard({ title, data, valueKey, yMin, yMax, threshold, fmt }) {
           </g>
         ))}
       </svg>
+      <div className="chart-legend">
+        <span className="chart-legend-dash" style={{borderColor: threshold.color}}/>
+        <span className="chart-legend-label" style={{color: threshold.color}}>{threshold.label}</span>
+      </div>
     </div>
   );
 }
