@@ -536,6 +536,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  min-width: 0;
+  overflow: hidden;
 }
 .calc-card:last-child { border-right: none; }
 .calc-card-acc { background: var(--accent); }
