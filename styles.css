@@ -290,6 +290,8 @@ body {
   padding: 28px 32px 36px;
   border-right: 1px solid var(--ink);
   position: relative;
+  min-width: 0;
+  overflow: hidden;
 }
 .big-stat:last-child { border-right: none; }
 .big-stat-acc { background: var(--accent); }
