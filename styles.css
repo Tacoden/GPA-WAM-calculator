@@ -683,34 +683,39 @@ body {
   .calc-dist-num { font-size: clamp(32px, 9vw, 56px); }
   .calc-dist-plus { font-size: clamp(22px, 6vw, 36px); }
 
-  /* Table — stack rows as cards */
-  .utbl, .utbl tbody { display: block; }
+  /* Table — stack rows as cards (flex overrides iOS Safari table display) */
+  .utbl { display: flex; flex-direction: column; border-bottom: none; }
   .utbl thead { display: none; }
+  .utbl tbody { display: flex; flex-direction: column; }
   .utbl tbody tr {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
     padding: 12px 0;
     border-bottom: 1px dotted var(--ink-faint);
   }
   .utbl tbody tr:last-child { border-bottom: none; }
   .utbl td {
-    display: inline-block;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
     padding: 2px 10px 2px 0;
   }
   .utbl .td-title {
-    display: block;
-    width: 100%;
+    flex: 0 0 100%;
     padding: 0 0 6px 0;
     font-size: 14px;
     white-space: normal;
   }
   .utbl td[data-label="CR"] { display: none; }
   .utbl td::before {
-    content: attr(data-label) " ";
+    content: attr(data-label);
     font-family: var(--mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--ink-soft);
     text-transform: uppercase;
+    flex-shrink: 0;
   }
   .utbl .td-title::before { display: none; }
 }
