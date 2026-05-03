@@ -312,7 +312,7 @@ body {
   margin: 8px 0 4px;
 }
 .big-stat-num {
-  font-size: clamp(48px, 9vw, 160px);
+  font-size: 72px;
   font-weight: 900;
   letter-spacing: -0.06em;
   line-height: 0.85;
@@ -675,6 +675,9 @@ body {
   .drop-h { font-size: clamp(36px, 8vw, 72px); }
   .drop-status { font-size: clamp(36px, 10vw, 72px); }
 
+  /* Big numbers — 1-col layout has full width, so can go larger */
+  .big-stat-num { font-size: clamp(64px, 18vw, 120px); }
+
   /* Calculators */
   .calc-card { padding: 22px 18px 24px; }
   .calc-inputs { flex-direction: column; gap: 10px; }
@@ -719,3 +722,7 @@ body {
   }
   .utbl .td-title::before { display: none; }
 }
+
+/* ── Desktop big-stat step-up sizes (2-col layout) ──────────────────── */
+@media (min-width: 1024px) { .big-stat-num { font-size: 96px; } }
+@media (min-width: 1280px) { .big-stat-num { font-size: 120px; } }
